@@ -101,7 +101,7 @@ class AuthController extends Controller
                     $token = $user->createToken("accessToken")->plainTextToken;
                     return response()->json([
                         "message" => "Connecter avec succès",
-                        "data" => $user,
+                        "data" => user::with('engagement.permission')->first(),
                         "status" => 200,
                         "token" => $token,
                     ], 200);
@@ -159,5 +159,4 @@ class AuthController extends Controller
             ], 422);
         }
     }
-
 }

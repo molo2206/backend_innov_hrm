@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\AssignPermission;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\CompanyController;
 use App\Http\Controllers\PermissionController;
@@ -26,5 +27,9 @@ Route::group(['middleware' => ['auth:sanctum',]], function () {
     Route::post('user/editimage/{id}', [UserController::class,'editPhoto']);
     //Gestion des company
     Route::post('company/store',[CompanyController::class, 'store']);
+
+    //Gestion des permissions
+    Route::post('permission/store',[PermissionController::class,'store']);
+    Route::post('permission/assignpermission',[AssignPermission::class,'assignPermissions']);
 
 });

@@ -13,15 +13,10 @@ use Laravel\Sanctum\HasApiTokens;
 class User extends Authenticatable
 {
     use HasApiTokens, HasFactory, Notifiable, HasUuids;
-    // protected $table = "users";
-    /**
-     * The attributes that are mass assignable.
-     *
-     * @var array<int, string>
-     */
 
     protected $table = "users";
-    protected $fillable = [
+    protected $fillable =
+    [
         'first_name',
         'last_name',
         'prename',
@@ -54,9 +49,20 @@ class User extends Authenticatable
         'email_verified_at' => 'datetime',
         'password' => 'hashed',
     ];
+
+    public function engagement()
+    {
+        return $this->belongsToMany(Company::class, 'engagements', 'iduser', 'idcompany');
+    }
+
+    public function commit()
+    {
+        return $this->belongsTo(Commitments::class, 'id', 'iduser');
+    }
+
     public function checkPermission($name, $action)
     {
-        $exis = $this->role->permissions()->where('name', $name)->where('status', 1)->where('deleted', 0)->first();
+        $exis = $this->commit->permissions()->where('name', $name)->where('status', 1)->where('deleted', 0)->first();
         if ($exis) {
             if ($exis->access->$action) {
                 return true;

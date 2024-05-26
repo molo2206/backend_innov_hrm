@@ -3,8 +3,10 @@
 namespace App\Http\Controllers;
 
 use App\Http\Controllers\Controller;
+use App\Models\Commitments;
 use App\Models\Company;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class CompanyController extends Controller
 {
@@ -31,19 +33,42 @@ class CompanyController extends Controller
                 "message" => 'Numèro de téléphone existe'
             ], 422);
         }
+        $user = Auth::user();
         $image = MethodsController::uploadImageOtherServer($request->logo);
         if ($image) {
             $company = Company::create($request->all());
+            $engagement = Commitments::create([
+                'iduser' => $user->id,
+                'idcompany' => $company->id,
+            ]);
+            $engagement->permissions()->detach();
+            foreach ($request->permissions as $item) {
+                $engagement->permissions()->attach(
+                    [
+                        $engagement->id => [
+                            'permission_id' => $item['permissionid'],
+                            'create' => $item['create'],
+                            'read' => $item['read'],
+                            'update' => $item['update'],
+                            'delete' => $item['delete']
+                        ]
+                    ]
+                );
+            }
+            return response()->json([
+                "message" => trans('messages.saved'),
+            ], 200);
+
             return response()->json([
                 "data" => $company,
                 "message" => 'succès'
             ], 200);
         } else {
             $company = Company::create($request->all());
-            return response()->json([
-                "data" => $company,
-                "message" => 'succès'
-            ], 200);
+            Commitments::create([
+                'iduser' => $user->id,
+                'idcompany' => $company->id,
+            ]);
         }
     }
     public function update(Request $request, $id)
@@ -56,6 +81,5 @@ class CompanyController extends Controller
             'city' => 'required',
             'pays' => 'required',
         ]);
-
     }
 }

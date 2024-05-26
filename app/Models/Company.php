@@ -8,9 +8,9 @@ use Illuminate\Database\Eloquent\Model;
 
 class Company extends Model
 {
-    use HasFactory,HasUuids;
+    use HasFactory, HasUuids;
     protected $table = 'company';
-    protected $fillable=[
+    protected $fillable = [
         'name',
         'email',
         'phone',
@@ -26,4 +26,8 @@ class Company extends Model
         'rccm',
         'idnat'
     ];
+    public function permission()
+    {
+        return $this->belongsToMany(Permissions::class, 'engagement_has_permissions', 'permission_id', 'engagement');
+    }
 }

@@ -6,7 +6,7 @@ use App\Models\Permissions;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
-class permissionController extends Controller
+class PermissionController extends Controller
 {
     /**
      * Display a listing of the resource.
